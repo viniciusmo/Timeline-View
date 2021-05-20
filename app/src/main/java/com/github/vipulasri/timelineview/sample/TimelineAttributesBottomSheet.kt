@@ -72,7 +72,7 @@ class TimelineAttributesBottomSheet: RoundedCornerBottomSheet() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val attributes = (arguments!!.getParcelable(EXTRA_ATTRIBUTES) as TimelineAttributes)
+        val attributes = (arguments?.getParcelable(EXTRA_ATTRIBUTES) as? TimelineAttributes)!!
         mAttributes = attributes.copy()
 
         text_attributes_heading.setOnClickListener { dismiss() }
