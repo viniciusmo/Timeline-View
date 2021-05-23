@@ -1,49 +1,63 @@
 package com.vipulasri.timelineview.compose
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun TimelineView(
+  modifier: Modifier = Modifier,
   position: Int = -1,
   size: Int = -1,
+  marker: Painter = painterResource(id = R.drawable.ic_vector_marker),
+  markerSize: Dp = 20.dp,
   lineStyle: LineStyle = LineStyle.Dashed()
 ) {
-  DrawTimeline(position, size, lineStyle)
+  DrawTimeline(modifier, position, size, marker, markerSize, lineStyle)
 }
 
 @Composable
 private fun DrawTimeline(
+  modifier: Modifier,
   position: Int,
   size: Int,
+  marker: Painter,
+  markerSize: Dp,
   lineStyle: LineStyle = LineStyle.Dashed()
 ) {
-  Canvas(modifier = Modifier.size(100.dp)) {
-    drawCircle(Color.Blue, radius = 20f)
+  Canvas(
+    modifier = modifier.defaultMinSize(
+      minWidth = markerSize,
+      minHeight = markerSize
+    )
+  ) {
+    drawCircle(Color.Blue, radius = markerSize.value)
     when (position) {
       0 -> {
-        drawEndLine(lineStyle)
+        drawEndLine(markerSize, lineStyle)
       }
       size.minus(1) -> {
-        drawStartLine(lineStyle)
+        drawStartLine(markerSize, lineStyle)
       }
       else -> {
-        drawStartLine(lineStyle)
-        drawEndLine(lineStyle)
+        drawStartLine(markerSize, lineStyle)
+        drawEndLine(markerSize, lineStyle)
       }
     }
   }
 }
 
-private fun DrawScope.drawStartLine(lineStyle: LineStyle) {
-  val startOffset = this.center - Offset(0f, 20f)
+private fun DrawScope.drawStartLine(markerSize: Dp, lineStyle: LineStyle) {
+  val startOffset = this.center - Offset(0f, markerSize.value)
   val endOffset = Offset(this.center.x, 0f)
   drawLine(
     color = Color.Black,
@@ -54,8 +68,8 @@ private fun DrawScope.drawStartLine(lineStyle: LineStyle) {
   )
 }
 
-private fun DrawScope.drawEndLine(lineStyle: LineStyle) {
-  val startOffset = this.center + Offset(0f, 20f)
+private fun DrawScope.drawEndLine(markerSize: Dp, lineStyle: LineStyle) {
+  val startOffset = this.center + Offset(0f, markerSize.value)
   val endOffset = Offset(this.center.x, this.size.height)
   drawLine(
     color = Color.Black,
