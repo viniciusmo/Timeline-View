@@ -11,7 +11,7 @@ sealed class LineStyle {
   ) : LineStyle()
 }
 
-fun LineStyle.width(): Float {
+internal fun LineStyle.width(): Float {
   return when (this) {
     is LineStyle.Normal -> this.width
     is LineStyle.Dashed -> this.width
