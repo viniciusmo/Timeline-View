@@ -25,10 +25,8 @@ ext {
 android {
     compileSdkVersion versions.compileSdk
     defaultConfig {
-        minSdkVersion versions.minSdk
+        minSdkVersion versions.libraryMinSdk
         targetSdkVersion versions.targetSdk
-        versionCode 12
-        versionName libraryVersion
     }
 
     buildTypes {
