@@ -3,9 +3,18 @@ package com.github.vipulasri.timelineview.sample.example
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,21 +26,49 @@ class ComposeExampleActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
-      TimeLineViewList()
+      MaterialTheme {
+        Scaffold(
+          topBar = {
+            ToolBar {
+              closeScreen()
+            }
+          }
+        ) {
+          TimeLineViewList()
+        }
+      }
     }
+  }
+
+  private fun closeScreen() {
+    finish()
   }
 
 }
 
 @Composable
+private fun ToolBar(onBack: () -> Unit) {
+  TopAppBar {
+    Icon(
+      modifier = Modifier.clickable {
+        onBack.invoke()
+      },
+      imageVector = Icons.Default.ArrowBack,
+      contentDescription = "Back",
+    )
+    Text(text = "Compose Example")
+  }
+}
+
+@Composable
 private fun TimeLineViewList() {
-  val list = listOf("1", "2", "3", "4", "5", "6")
+  val list = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15")
   LazyColumn {
     itemsIndexed(list, itemContent = { index, item ->
       TimelineView(
-        modifier = Modifier.size(100.dp),
-        position = index,
-        size = list.size
+        modifier = Modifier.size(100.dp).fillMaxWidth(),
+        itemPosition = index,
+        totalItems = list.size
       )
     })
   }
