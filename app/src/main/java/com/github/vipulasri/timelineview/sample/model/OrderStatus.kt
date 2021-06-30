@@ -5,7 +5,7 @@ package com.github.vipulasri.timelineview.sample.model
  */
 
 enum class OrderStatus {
-    COMPLETED,
-    ACTIVE,
-    INACTIVE
+  COMPLETED,
+  ACTIVE,
+  INACTIVE
 }

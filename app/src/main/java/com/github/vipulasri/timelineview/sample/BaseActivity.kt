@@ -1,89 +1,68 @@
 package com.github.vipulasri.timelineview.sample
 
-import android.graphics.drawable.Drawable
+import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.MenuItem
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import com.github.vipulasri.timelineview.sample.example.whenNotNull
+import androidx.core.content.ContextCompat
+import androidx.viewbinding.ViewBinding
 
-open class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 
-    var toolbar: Toolbar? = null
+  private var _binding: ViewBinding? = null
+  abstract val bindingInflater: (LayoutInflater) -> VB
 
-    //If back button is displayed in action bar, return false
-    protected var isDisplayHomeAsUpEnabled: Boolean
-        get() = false
-        set(value) {
-            whenNotNull(supportActionBar) {
-                it.setDisplayHomeAsUpEnabled(value)
-            }
+  @Suppress("UNCHECKED_CAST")
+  protected val binding: VB
+    get() = _binding as VB
 
-        }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    _binding = bindingInflater.invoke(layoutInflater)
+    setContentView(requireNotNull(_binding).root)
+  }
 
-    override fun setContentView(layoutResID: Int) {
-        super.setContentView(layoutResID)
+  fun setToolbar(toolbar: Toolbar, isHomeButtonEnabled: Boolean = false) {
+    setSupportActionBar(toolbar)
+    supportActionBar?.setHomeButtonEnabled(isHomeButtonEnabled)
+    supportActionBar?.setDisplayHomeAsUpEnabled(isHomeButtonEnabled)
+  }
 
-        injectViews()
-
-        //Displaying the back button in the action bar
-        if (isDisplayHomeAsUpEnabled) {
-            whenNotNull(supportActionBar) {
-                it.setDisplayHomeAsUpEnabled(true)
-            }
-        }
+  fun setToolbarHomeIcon(@DrawableRes iconRes: Int, @ColorRes colorRes: Int = -1) {
+    val drawable = ContextCompat.getDrawable(this, iconRes)
+    if (colorRes != -1) {
+      drawable?.mutate()
+      drawable?.setTint(ContextCompat.getColor(this, colorRes))
     }
+    supportActionBar?.setHomeAsUpIndicator(drawable)
+  }
 
-    protected fun injectViews() {
-        toolbar = findViewById(R.id.toolbar)
-        setupToolbar()
-    }
+  fun setToolbarTitle(title: CharSequence?) {
+    supportActionBar?.title = title
+  }
 
-    fun setContentViewWithoutInject(layoutResId: Int) {
-        super.setContentView(layoutResId)
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    // Menu
+    when (item.itemId) {
+      // When home is clicked
+      android.R.id.home -> {
+        onActionBarHomeIconClicked()
+        return true
+      }
     }
+    return super.onOptionsItemSelected(item)
+  }
 
-    protected fun setupToolbar() {
-        whenNotNull(toolbar) {
-            setSupportActionBar(it)
-        }
-    }
+  open fun onActionBarHomeIconClicked() {
+    onBackPressed()
+  }
 
-    fun setActivityTitle(title: Int) {
-        whenNotNull(supportActionBar) {
-            it.setTitle(title)
-        }
-    }
+  override fun onDestroy() {
+    super.onDestroy()
+    _binding = null
+  }
 
-    fun setActivityTitle(title: String) {
-        whenNotNull(supportActionBar) {
-            it.setTitle(title)
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        //Menu
-        when (item.itemId) {
-        //When home is clicked
-            android.R.id.home -> {
-                onActionBarHomeIconClicked()
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    fun setHomeAsUpIndicator(drawable: Drawable) {
-        whenNotNull(supportActionBar) {
-            it.setHomeAsUpIndicator(drawable)
-        }
-    }
-
-    //Method for when home button is clicked
-    private fun onActionBarHomeIconClicked() {
-        if (isDisplayHomeAsUpEnabled) {
-            onBackPressed()
-        } else {
-            finish()
-        }
-    }
 }

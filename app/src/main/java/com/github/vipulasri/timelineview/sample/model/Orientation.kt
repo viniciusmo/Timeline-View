@@ -5,6 +5,6 @@ package com.github.vipulasri.timelineview.sample.model
  */
 
 enum class Orientation {
-    VERTICAL,
-    HORIZONTAL
+  VERTICAL,
+  HORIZONTAL
 }
