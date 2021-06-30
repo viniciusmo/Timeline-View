@@ -11,29 +11,31 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun TimelineView(
   modifier: Modifier = Modifier,
-  position: Int = -1,
-  size: Int = -1,
+  itemPosition: Int = -1,
+  totalItems: Int = -1,
   marker: Drawable? = LocalContext.current.getDrawable(R.drawable.ic_vector_marker),
-  markerSize: Dp = 20.dp,
+  markerSize: Dp = TimelineDefaults.MarkerSize,
+  markerColor: Color = TimelineDefaults.MarkerColor,
   lineStyle: LineStyle = LineStyle.Normal()
 ) {
-  DrawTimeline(modifier, position, size, marker, markerSize, lineStyle)
+  DrawTimeline(modifier, itemPosition, totalItems, marker, markerSize, markerColor, lineStyle)
 }
 
 @Composable
 private fun DrawTimeline(
   modifier: Modifier,
-  position: Int,
-  size: Int,
+  itemPosition: Int,
+  totalItems: Int,
   marker: Drawable?,
   markerSize: Dp,
+  markerColor: Color,
   lineStyle: LineStyle = LineStyle.Dashed()
 ) {
   Canvas(
@@ -42,17 +44,20 @@ private fun DrawTimeline(
       minHeight = markerSize
     )
   ) {
-    drawMarker(marker, markerSize)
-    drawLine(position, size, markerSize, lineStyle)
+    drawMarker(marker, markerSize, markerColor)
+    drawLine(itemPosition, totalItems, markerSize, lineStyle)
   }
 }
 
 private fun DrawScope.drawMarker(
   marker: Drawable?,
-  markerSize: Dp
+  markerSize: Dp,
+  markerColor: Color
 ) {
   drawIntoCanvas { canvas ->
     marker?.let {
+      it.mutate()
+
       val width = this.size.width
       val height = this.size.height
 
@@ -62,22 +67,23 @@ private fun DrawScope.drawMarker(
       val bottom = (width.div(2f) + markerSize.value).toInt()
 
       it.setBounds(left, top, right, bottom)
+      it.setTint(markerColor.toArgb())
       it.draw(canvas.nativeCanvas)
     }
   }
 }
 
 private fun DrawScope.drawLine(
-  position: Int,
-  size: Int,
+  itemPosition: Int,
+  totalItems: Int,
   markerSize: Dp,
   lineStyle: LineStyle
 ) {
-  when (position) {
+  when (itemPosition) {
     0 -> {
       drawEndLine(markerSize, lineStyle)
     }
-    size.minus(1) -> {
+    totalItems.minus(1) -> {
       drawStartLine(markerSize, lineStyle)
     }
     else -> {
@@ -91,10 +97,10 @@ private fun DrawScope.drawStartLine(markerSize: Dp, lineStyle: LineStyle) {
   val startOffset = this.center - Offset(0f, markerSize.value)
   val endOffset = Offset(this.center.x, 0f)
   drawLine(
-    color = Color.Black,
+    color = lineStyle.color(),
     start = startOffset,
     end = endOffset,
-    strokeWidth = lineStyle.width(),
+    strokeWidth = lineStyle.width().value,
     pathEffect = getPathEffect(lineStyle)
   )
 }
@@ -103,10 +109,10 @@ private fun DrawScope.drawEndLine(markerSize: Dp, lineStyle: LineStyle) {
   val startOffset = this.center + Offset(0f, markerSize.value)
   val endOffset = Offset(this.center.x, this.size.height)
   drawLine(
-    color = Color.Black,
+    color = lineStyle.color(),
     start = startOffset,
     end = endOffset,
-    strokeWidth = lineStyle.width(),
+    strokeWidth = lineStyle.width().value,
     pathEffect = getPathEffect(lineStyle)
   )
 }
@@ -116,8 +122,8 @@ private fun getPathEffect(lineStyle: LineStyle): PathEffect? {
 
   if (lineStyle is LineStyle.Dashed) {
     val intervals = floatArrayOf(
-      lineStyle.dashLength,
-      lineStyle.dashLength + lineStyle.dashGap
+      lineStyle.dashLength.value,
+      lineStyle.dashLength.value + lineStyle.dashGap.value
     )
     pathEffect = PathEffect.dashPathEffect(intervals, 0f)
   }
