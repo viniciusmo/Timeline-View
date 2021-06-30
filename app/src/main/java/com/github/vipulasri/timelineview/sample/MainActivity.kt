@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.vipulasri.timelineview.TimelineView
+import com.github.vipulasri.timelineview.sample.example.ComposeExampleActivity
 import com.github.vipulasri.timelineview.sample.example.ExampleActivity
 import com.github.vipulasri.timelineview.sample.extentions.dpToPx
 import com.github.vipulasri.timelineview.sample.extentions.getColorCompat
@@ -54,7 +55,9 @@ class MainActivity : BaseActivity() {
         setDataListItems()
         initRecyclerView()
 
-        action_example_activity.setOnClickListener { startActivity(Intent(this, ExampleActivity::class.java)) }
+        action_example_activity.setOnClickListener {
+          startActivity(Intent(this, ComposeExampleActivity::class.java))
+        }
 
         fab_options.setOnClickListener {
             TimelineAttributesBottomSheet.showDialog(supportFragmentManager, mAttributes, object: TimelineAttributesBottomSheet.Callbacks {

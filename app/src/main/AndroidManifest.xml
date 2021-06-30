@@ -25,6 +25,10 @@
         <activity
             android:name=".example.ExampleActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
+          android:name=".example.ComposeExampleActivity"
+          android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

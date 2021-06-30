@@ -22,7 +22,7 @@ fun TimelineView(
   size: Int = -1,
   marker: Drawable? = LocalContext.current.getDrawable(R.drawable.ic_vector_marker),
   markerSize: Dp = 20.dp,
-  lineStyle: LineStyle = LineStyle.Dashed()
+  lineStyle: LineStyle = LineStyle.Normal()
 ) {
   DrawTimeline(modifier, position, size, marker, markerSize, lineStyle)
 }

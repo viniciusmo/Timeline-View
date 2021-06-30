@@ -17,22 +17,14 @@ class ComposeExampleActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
-      TimelineView()
+      TimeLineViewList()
     }
   }
 
 }
 
-@Preview(showBackground = true)
 @Composable
-fun TimeLineViewPreview() {
-  TimelineView(position = 0, size = 2)
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TimeLineViewListPreview() {
+private fun TimeLineViewList() {
   val list = listOf("1", "2", "3", "4", "5", "6")
   LazyColumn {
     itemsIndexed(list, itemContent = { index, item ->
@@ -43,4 +35,16 @@ fun TimeLineViewListPreview() {
       )
     })
   }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TimeLineViewPreview() {
+  TimelineView()
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TimeLineViewListPreview() {
+  TimeLineViewList()
 }
